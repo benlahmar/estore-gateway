@@ -1,0 +1,33 @@
+server:
+  port: 9000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: catalogue
+        uri: http://localhost:8081/
+        predicates:
+        - Path=/categories/**, /produits/**
+        - Query=abc,xd
+        - Header=RMA, \d+
+      - id: customer
+        uri: lb://customer-service
+        predicates:
+        - Path=/profiles/**, /users/**
+        filters:
+        - AddRequestHeader=X-Request-red, blue
+        - AddResponseHeader=X-Response-Red, Blue
+      - id: commandes
+        uri: http://localhost:8083/
+        predicates:
+        - Path=/commandes/**, /catalogues/**
+  application:
+    name: GateWay
